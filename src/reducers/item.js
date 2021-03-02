@@ -21,10 +21,11 @@ export default function itemReducer (state = initialState, action) {
             }
         }
         case FETCH_ITEM_FAILURE: {
+            const message = action.payload
             return {
                 ...state,
                 loading: false,
-                error: true
+                error: message
             }
         }
         case FETCH_ITEM_SUCCESS: {

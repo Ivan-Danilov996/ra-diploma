@@ -1,13 +1,15 @@
 import {
     FETCH_ORDER_FAILURE,
     FETCH_ORDER_REQUEST,
-    FETCH_ORDER_SUCCESS
+    FETCH_ORDER_SUCCESS,
+    SET_INITIAL_ORDER_STATE
 } from '../actions/actionTypes'
 
 
 const initialState = {
     error: false,
     loading: false,
+    success: false
 }
 
 export default function ordeFetchReducer(state = initialState, action) {
@@ -19,10 +21,11 @@ export default function ordeFetchReducer(state = initialState, action) {
             }
         }
         case FETCH_ORDER_FAILURE: {
+            const message = action.payload
             return {
                 ...state,
                 loading: false,
-                error: true
+                error: message
             }
         }
         case FETCH_ORDER_SUCCESS: {
@@ -30,6 +33,12 @@ export default function ordeFetchReducer(state = initialState, action) {
                 ...state,
                 loading: false,
                 error: false,
+                success: true
+            }
+        }
+        case SET_INITIAL_ORDER_STATE: {
+            return {
+                initialState
             }
         }
         default:

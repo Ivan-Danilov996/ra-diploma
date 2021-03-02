@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { addToCart } from "../actions/actionCreators"
+import { removeItemFromCart } from "../actions/actionCreators"
 
 export default function CartTable() {
 
@@ -8,8 +8,7 @@ export default function CartTable() {
     let sum = 0
 
     const handleClick = (key) => {
-        localStorage.removeItem(key)
-        dispatch(addToCart(Object.entries(localStorage)))
+        dispatch(removeItemFromCart(key))
     }
 
     return (
@@ -28,19 +27,18 @@ export default function CartTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map(([key, valueString], index) => {
-                        const value = JSON.parse(valueString)
-                        const allPrice = value.price * value.count
+                    {items.map((item, index) => {
+                        const allPrice = item.price * item.count
                         sum += allPrice
                         return (
-                            <tr key={key}>
+                            <tr key={item.key}>
                                 <th scope="row">{index + 1}</th>
-                                <td><a href="/products/1.html">{value.title}</a></td>
-                                <td>{value.sizes}</td>
-                                <td>{value.count}</td>
-                                <td>{value.price}</td>
+                                <td><a href="/products/1.html">{item.title}</a></td>
+                                <td>{item.sizes}</td>
+                                <td>{item.count}</td>
+                                <td>{item.price}</td>
                                 <td>{allPrice} руб.</td>
-                                <td><button onClick={() => handleClick(key)} className="btn btn-outline-danger btn-sm">Удалить</button></td>
+                                <td><button onClick={() => handleClick(item.key)} className="btn btn-outline-danger btn-sm">Удалить</button></td>
                             </tr>
                         )
                     })}

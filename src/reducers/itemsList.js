@@ -28,10 +28,11 @@ export default function itemsListReducer (state = initialState, action) {
             }
         }
         case FETCH_ITEMS_FAILURE: {
+            const message = action.payload
             return {
                 ...state,
                 loading: false,
-                error: true
+                error: message
             }
         }
         case FETCH_ITEMS_SUCCESS: {
@@ -50,10 +51,11 @@ export default function itemsListReducer (state = initialState, action) {
             }
         }
         case FETCH_MORE_ITEMS_FAILURE: {
+            const message = action.payload
             return {
                 ...state,
                 loadingMoreItems: false,
-                errorMoreItems: true
+                errorMoreItems: message
             }
         }
         case FETCH_MORE_ITEMS_SUCCESS: {
@@ -66,7 +68,6 @@ export default function itemsListReducer (state = initialState, action) {
             }
         }
         case SET_DISABLE: {
-            const category = action.payload
             return {
                 ...state,
                 disable: true

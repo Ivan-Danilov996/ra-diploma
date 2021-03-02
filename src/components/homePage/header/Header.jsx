@@ -2,9 +2,6 @@ import headerLogo from '../../../img/header-logo.png'
 import CartBlock from './CartBlock'
 import Search from './Search'
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
     Link,
     NavLink
   } from "react-router-dom";

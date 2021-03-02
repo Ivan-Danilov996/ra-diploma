@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchItems, fetchMoreItems, setActiveCategory } from "../../../actions/actionCreators";
 import Categories from '../../Categories';
 import { fetchCategories } from "../../../actions/actionCreators"
+import { Preloader } from '../../Preloader';
 
 
 export default function Catalog(props) {
@@ -24,7 +25,8 @@ export default function Catalog(props) {
         dispatch(fetchCategories())
     }, [dispatch])
 
-    const handleClick = (id) => {
+    const handleClick = (e, id) => {
+        e.preventDefault()
         dispatch(setActiveCategory(id))
     }
 
@@ -32,14 +34,9 @@ export default function Catalog(props) {
         dispatch(fetchMoreItems(length, activeCategory, value))
     }
 
-    if (loading && loadingCategories) {
-        return (
-            <p>loading</p>
-        )
-    }
     if (error && errorCategories) {
         return (
-            <p>error</p>
+            <p>{error}</p>
         )
     }
 
@@ -48,13 +45,16 @@ export default function Catalog(props) {
             <section className="catalog">
                 <h2 className="text-center">Каталог</h2>
                 {props.children}
-                <Categories handleClick={handleClick} categories={categories} activeCategory={activeCategory} />
-                <ProductList items={items} />
+                {loading && loadingCategories ? <Preloader /> :
+                    <Fragment>
+                        <Categories handleClick={handleClick} categories={categories} activeCategory={activeCategory} />
+                        {loading ? <Preloader /> : <ProductList items={items} />}
+                    </Fragment>}
                 {disable ? null :
                     <div className="text-center">
-                        <button onClick={() => handleBtnClick(items.length, activeCategory, value)} className="btn btn-outline-primary">Загрузить ещё</button>
+                        {loadingMoreItems ? <Preloader /> :
+                            (errorMoreItems ? errorMoreItems : <button onClick={() => handleBtnClick(items.length, activeCategory, value)} className="btn btn-outline-primary">Загрузить ещё</button>)}
                     </div>}
-
             </section>
         </Fragment>
     )

@@ -22,7 +22,9 @@ import {
     CHANGE_FORM_VALUE,
     FETCH_ORDER_REQUEST,
     FETCH_ORDER_SUCCESS,
-    FETCH_ORDER_FAILURE
+    FETCH_ORDER_FAILURE,
+    SET_INITIAL_ORDER_STATE,
+    CLEAR_FORM_VALUES
 } from './actionTypes'
 
 
@@ -53,7 +55,7 @@ export const fetchTopCategoriesFailure = (message) => (
 export const fetchCategories = () => async dispatch => {
     dispatch(fetchTopCategoriesRequest());
     try {
-        const response = await fetch(`http://localhost:7070/api/categories`)
+        const response = await fetch(`${process.env.REACT_APP_URL}/categories`)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -85,7 +87,7 @@ export const fetchTopItemsFailure = (message) => (
 export const fetchTopItems = () => async dispatch => {
     dispatch(fetchTopItemsRequest());
     try {
-        const response = await fetch(`http://localhost:7070/api/top-sales`)
+        const response = await fetch(`${process.env.REACT_APP_URL}/top-sales`)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -119,7 +121,7 @@ export const fetchItemsFailure = (message) => (
 export const fetchItems = (id, value) => async dispatch => {
     dispatch(fetchItemsRequest());
     try {
-        const response = await fetch(id === 11 ? `http://localhost:7070/api/items?q=${value}` : ` http://localhost:7070/api/items?categoryId=${id}&q=${value}`)
+        const response = await fetch(id === 11 ? `${process.env.REACT_APP_URL}/items?q=${value}` : ` ${process.env.REACT_APP_URL}/items?categoryId=${id}&q=${value}`)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -160,8 +162,8 @@ export const fetchMoreItems = (length, activeCategory, value) => async dispatch 
     dispatch(fetchMoreItemsRequest());
     try {
         const response = await fetch(activeCategory === 11 ?
-            `http://localhost:7070/api/items?offset=${length}&q=${value}` :
-            `http://localhost:7070/api/items?categoryId=${activeCategory}&offset=${length}&q=${value}`)
+            `${process.env.REACT_APP_URL}/items?offset=${length}&q=${value}` :
+            `${process.env.REACT_APP_URL}/items?categoryId=${activeCategory}&offset=${length}&q=${value}`)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -184,8 +186,8 @@ export const changeValue = (value) => (
 export const fetchFilterItems = (value, activeCategory) => async dispatch => {
     dispatch(fetchItemsRequest());
     try {
-        const response = await fetch(activeCategory === 11 ? `http://localhost:7070/api/items?q=${value}` :
-            `http://localhost:7070/api/items?q=${value}&categoryId=${activeCategory}`)
+        const response = await fetch(activeCategory === 11 ? `${process.env.REACT_APP_URL}/items?q=${value}` :
+            `${process.env.REACT_APP_URL}/items?q=${value}&categoryId=${activeCategory}`)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -218,7 +220,7 @@ export const fetchItemFailure = (message) => (
 export const fetchItem = (id) => async dispatch => {
     dispatch(fetchItemRequest());
     try {
-        const response = await fetch(`http://localhost:7070/api/items/${id}`)
+        const response = await fetch(`${process.env.REACT_APP_URL}/items/${id}`)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -229,17 +231,7 @@ export const fetchItem = (id) => async dispatch => {
     }
 }
 
-export const addToCart = (items) => (
-    {
-        type: ADD_TO_CART, payload: items
-    }
-)
 
-export const removeFromCart = (id) => (
-    {
-        type: REMOVE_FROM_CART, payload: id
-    }
-)
 
 export const changeFormValue = (name, value) => (
     {
@@ -250,21 +242,24 @@ export const changeFormValue = (name, value) => (
     }
 )
 
+export const clearFormValues = () => (
+    {
+        type: CLEAR_FORM_VALUES
+    }
+)
+
 export const fetchOrder = (order) => async dispatch => {
     dispatch(fetchOrderRequest());
-    console.log('of')
     try {
-        const response = await fetch(`http://localhost:7070/api/order`, {
+        const response = await fetch(`${process.env.REACT_APP_URL}/order`, {
             method: 'POST',
-            data: JSON.stringify(order),
-            headers: 'application/json'
-        }
-        )
+            body: JSON.stringify(order),
+            headers: { 'Content-Type': 'application/json' }
+        })
         if (!response.ok) {
             throw new Error(response.statusText);
         }
-        const data = await response.json()
-        console.log(data)
+        //const data = await response.json()
         dispatch(fetchOrderSuccess());
     } catch (e) {
         dispatch(fetchOrderFailure('Произошла ошибка!'));
@@ -287,3 +282,68 @@ export const fetchOrderFailure = (message) => (
         type: FETCH_ORDER_FAILURE, payload: message
     }
 )
+
+export const setInitialOrderState = () => (
+    {
+        type: SET_INITIAL_ORDER_STATE
+    }
+)
+
+
+
+
+export const addToCart = (items) => (
+    {
+        type: ADD_TO_CART, payload: items
+    }
+)
+
+export const removeFromCart = () => (
+    {
+        type: REMOVE_FROM_CART
+    }
+)
+
+export const clearCart = () => dispatch => {
+    localStorage.removeItem('cart')
+    dispatch(removeFromCart())
+}
+
+
+export const setCart = (key, size, count, item) => dispatch => {
+    //set items cart to localStorage
+    if (localStorage.getItem('cart')) {
+        const cartItems = JSON.parse(localStorage.getItem('cart'))
+        if (cartItems.find(cartItem => cartItem.key === parseInt(key))) {
+            const newCartItems = cartItems.map(cartItem => {
+                if (cartItem.key === parseInt(key)) {
+                    return { ...item, key: parseInt(key), sizes: size, count: cartItem.count + count }
+                }
+                return cartItem
+            }
+            )
+            localStorage.setItem('cart', JSON.stringify(newCartItems))
+        } else {
+            const newCartItems = { ...item, key: parseInt(key), sizes: size, count }
+            cartItems.push(newCartItems)
+            localStorage.setItem('cart', JSON.stringify(cartItems))
+        }
+    } else {
+        const array = []
+        const cartItem = { ...item, key: parseInt(key), sizes: size, count }
+        array.push(cartItem)
+        localStorage.setItem('cart', JSON.stringify(array))
+    }
+
+    // get items cart from localStorage
+
+    const storageItems = JSON.parse(localStorage.getItem('cart'))
+
+    dispatch(addToCart(storageItems))
+}
+
+export const removeItemFromCart = (key) => dispatch => {
+    const items = JSON.parse(localStorage.getItem('cart')).filter(item => item.key !== key)
+    localStorage.setItem('cart', JSON.stringify(items))
+    dispatch(addToCart(items))
+}

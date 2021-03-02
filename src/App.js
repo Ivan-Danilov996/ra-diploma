@@ -5,8 +5,7 @@ import HomePage from './components/homePage/HomePage';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import Header from './components/homePage/header/Header';
 import Footer from './components/homePage/footer/Footer';

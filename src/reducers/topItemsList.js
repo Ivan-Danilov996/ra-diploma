@@ -20,10 +20,11 @@ export default function topItemsListReducer (state = initialState, action) {
             }
         }
         case FETCH_TOP_ITEMS_FAILURE: {
+            const message = action.payload
             return {
                 ...state,
                 loading: false,
-                error: true
+                error: message
             }
         }
         case FETCH_TOP_ITEMS_SUCCESS: {

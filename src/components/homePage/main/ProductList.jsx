@@ -2,8 +2,7 @@ import Product from "./Product";
 import { Fragment } from "react";
 
 
-export default function ProductList({items}) {
-
+export default function ProductList({ items}) {
     return (
         <Fragment>
             <div className="row">

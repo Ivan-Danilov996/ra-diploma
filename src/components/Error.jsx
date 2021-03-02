@@ -1,7 +1,4 @@
 import { Fragment } from 'react'
-import banner from '../img/banner.jpg'
-import Footer from './homePage/footer/Footer'
-import Header from './homePage/header/Header'
 export default function Error() {
     return (
         <Fragment>

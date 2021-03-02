@@ -1,4 +1,4 @@
-import { CHANGE_FORM_VALUE } from '../actions/actionTypes'
+import { CHANGE_FORM_VALUE, CLEAR_FORM_VALUES } from '../actions/actionTypes'
 
 const initialState = {
     phone: '',
@@ -8,10 +8,14 @@ const initialState = {
 export default function orderFormReducer(state = initialState, action) {
     switch (action.type) {
         case CHANGE_FORM_VALUE:
-            const {name, value} = action.payload
+            const { name, value } = action.payload
             return {
                 ...state,
                 [name]: value
+            }
+        case CLEAR_FORM_VALUES:
+            return {
+                initialState
             }
         default:
             return state

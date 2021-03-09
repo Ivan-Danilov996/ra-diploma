@@ -1,7 +1,9 @@
+import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 import { changeFormValue, clearCart, clearFormValues, fetchOrder, setInitialOrderState } from "../actions/actionCreators"
 import { Preloader } from "./Preloader"
+import ReloadBtn from "./ReloadBtn"
 
 export default function CartOrder() {
 
@@ -39,7 +41,7 @@ export default function CartOrder() {
 
     if (error) {
         return (
-            <p>{error}</p>
+            <Fragment> <p>{error}</p> <ReloadBtn setReload={handleSubmit}/></Fragment>
         )
     }
 

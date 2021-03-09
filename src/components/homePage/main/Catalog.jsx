@@ -1,10 +1,11 @@
-import { Fragment, useEffect } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import ProductList from './ProductList'
 import { useDispatch, useSelector } from "react-redux";
 import { fetchItems, fetchMoreItems, setActiveCategory } from "../../../actions/actionCreators";
 import Categories from '../../Categories';
 import { fetchCategories } from "../../../actions/actionCreators"
 import { Preloader } from '../../Preloader';
+import ReloadBtn from '../../ReloadBtn';
 
 
 export default function Catalog(props) {
@@ -13,17 +14,18 @@ export default function Catalog(props) {
     const { categories, errorCategories, loadingCategories, activeCategory } = useSelector(state => state.categoriesReducer)
     const { value } = useSelector(state => state.changeValueReducer)
     const dispatch = useDispatch()
+    const [reload, setReload] = useState(false)
 
     useEffect(() => {
         dispatch(fetchItems(activeCategory, value))
-    }, [dispatch, activeCategory])
+    }, [dispatch, activeCategory, reload])
 
 
 
 
     useEffect(() => {
         dispatch(fetchCategories())
-    }, [dispatch])
+    }, [dispatch, reload])
 
     const handleClick = (e, id) => {
         e.preventDefault()
@@ -36,7 +38,7 @@ export default function Catalog(props) {
 
     if (error && errorCategories) {
         return (
-            <p>{error}</p>
+            <Fragment> <p>{error}</p> <ReloadBtn setReload={setReload}/>  </Fragment>
         )
     }
 

@@ -4,7 +4,9 @@ import {
     useHistory
 } from "react-router-dom";
 import { fetchItem, setCart } from "../actions/actionCreators";
+import OrderImage from "./OrderImage";
 import { Preloader } from "./Preloader";
+import ReloadBtn from "./ReloadBtn";
 
 export default function Order({ match }) {
     const history = useHistory();
@@ -13,10 +15,11 @@ export default function Order({ match }) {
     const dispatch = useDispatch()
     const [selectedSize, setSelectedSize] = useState(null)
     const [count, setCount] = useState(1)
+    const [reload, setReload] = useState(false)
 
     useEffect(() => {
         dispatch(fetchItem(match.params.id))
-    }, [dispatch])
+    }, [dispatch, reload])
 
     const handleClick = (size) => {
         console.log(size)
@@ -57,21 +60,19 @@ export default function Order({ match }) {
 
     if (error) {
         return (
+            <Fragment>
             <p>{error}</p>
+            <ReloadBtn setReload={setReload}/>
+            </Fragment> 
         )
     }
-
-    //
 
     return (
         <Fragment>
             {item && <section className="catalog-item">
                 <h2 className="text-center">{item.title}</h2>
                 <div className="row">
-                    <div className="col-5">
-                        <img src={item.images[0]}
-                            className="img-fluid" alt="" />
-                    </div>
+                    <OrderImage imgSrc={item.images[0]}/>
                     <div className="col-7">
                         <table className="table table-bordered">
                             <tbody>
